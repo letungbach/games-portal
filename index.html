@@ -1,6 +1,253 @@
-<!-- index.html -->
-<h1>Games</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Games @ giong.ai</title>
 
-<ul>
-  <li><a href="/flappybird/">Flappy Bird</a></li>
-</ul>
+<style>
+:root{
+  --bg:#050816;
+  --panel:#0f172a;
+  --accent:#00e5ff;
+  --accent2:#8b5cf6;
+  --text:#f8fafc;
+  --muted:#94a3b8;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Inter,system-ui,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left,#1e3a8a55,transparent 40%),
+    radial-gradient(circle at bottom right,#7c3aed55,transparent 40%),
+    var(--bg);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+.container{
+  position:relative;
+  z-index:1;
+  max-width:1200px;
+  margin:auto;
+  padding:64px 24px;
+}
+
+.hero{
+  text-align:center;
+  padding:100px 0 80px;
+}
+
+.hero h1{
+  font-size:clamp(3rem,8vw,6rem);
+  background:linear-gradient(90deg,#00e5ff,#8b5cf6);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.hero p{
+  color:var(--muted);
+  margin-top:16px;
+  font-size:1.2rem;
+}
+
+.games{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:24px;
+}
+
+.card{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(15,23,42,.65);
+  backdrop-filter:blur(16px);
+  border-radius:24px;
+  padding:28px;
+  transition:.35s;
+  transform-style:preserve-3d;
+}
+
+.card:hover{
+  transform:
+    perspective(1000px)
+    rotateX(5deg)
+    rotateY(-5deg)
+    translateY(-8px);
+  border-color:rgba(0,229,255,.4);
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-50%;
+  background:
+    radial-gradient(circle,
+    rgba(0,229,255,.18) 0%,
+    transparent 60%);
+  transform:translateY(-30%);
+  pointer-events:none;
+}
+
+.game-icon{
+  font-size:52px;
+  margin-bottom:16px;
+}
+
+.card h2{
+  margin-bottom:10px;
+}
+
+.card p{
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.play{
+  display:inline-block;
+  margin-top:20px;
+  padding:12px 18px;
+  border-radius:12px;
+  text-decoration:none;
+  color:white;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.footer{
+  text-align:center;
+  color:var(--muted);
+  margin-top:80px;
+}
+
+.coming-soon{
+  opacity:.75;
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="container">
+
+  <section class="hero">
+    <h1>games.giong.ai</h1>
+    <p>Play. Learn. Experiment.</p>
+  </section>
+
+  <section class="games">
+
+    <div class="card">
+      <div class="game-icon">🐦</div>
+      <h2>Flappy Bird</h2>
+      <p>
+        Classic arcade challenge built with
+        HTML, CSS and JavaScript.
+      </p>
+      <a class="play" href="/flappybird/">
+        Play →
+      </a>
+    </div>
+
+    <div class="card">
+      <div class="game-icon">♟️</div>
+      <h2>Chess</h2>
+      <p>
+        enjoy.
+      </p>
+      <a class="play" href="http://chess.giong.ai">
+        Play →
+      </a>
+    </div>
+
+    <div class="card">
+      <div class="game-icon">🐍</div>
+      <h2>Snake</h2>
+      <p>
+        3d snake in three.js
+      </p>
+      <a class="play" href="/snake/">
+        Play →
+      </a>
+    </div>
+
+    <div class="card coming-soon">
+      <div class="game-icon">🎮</div>
+      <h2>More Games</h2>
+      <p>
+        New AI-generated and open-source games
+        will appear here.
+      </p>
+    </div>
+
+  </section>
+
+  <div class="footer">
+    Powered by Cloudflare Pages • giong.ai
+  </div>
+
+</div>
+
+<script>
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+let particles = [];
+
+function resize(){
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+for(let i=0;i<120;i++){
+  particles.push({
+    x:Math.random()*innerWidth,
+    y:Math.random()*innerHeight,
+    z:Math.random()*2+0.3,
+    dx:(Math.random()-0.5)*0.4,
+    dy:(Math.random()-0.5)*0.4
+  });
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  for(const p of particles){
+    p.x += p.dx*p.z;
+    p.y += p.dy*p.z;
+
+    if(p.x<0) p.x=canvas.width;
+    if(p.x>canvas.width) p.x=0;
+    if(p.y<0) p.y=canvas.height;
+    if(p.y>canvas.height) p.y=0;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.z*2,0,Math.PI*2);
+    ctx.fillStyle="rgba(0,229,255,.6)";
+    ctx.fill();
+  }
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+
+</body>
+</html>
